@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近想搭个私有云，在群里问了一圈又 Google 了一番选择用 NextCloud。本来以为按照官方文件就肯定稳了喵，谁知道还是被坑了喵。下面随便记录填坑 &amp;amp; 安装过程吧喵。 必须的玩意：   Ubuntu 18.04 MariaDB Nginx PHP     其他系统不会用的辣鸡  官方文档看这里吧：Admin Manual如果用Apache2的话就参考文档吧，我比较习惯用Nginx喵">
+<meta name="keywords" content="NextCloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NextCloud 安装填坑">
+<meta property="og:url" content="https://null4n.github.io/2018/12/05/nextcloud-install-guide/index.html">
+<meta property="og:site_name" content="Null&#39; 废话">
+<meta property="og:description" content="最近想搭个私有云，在群里问了一圈又 Google 了一番选择用 NextCloud。本来以为按照官方文件就肯定稳了喵，谁知道还是被坑了喵。下面随便记录填坑 &amp;amp; 安装过程吧喵。 必须的玩意：   Ubuntu 18.04 MariaDB Nginx PHP     其他系统不会用的辣鸡  官方文档看这里吧：Admin Manual如果用Apache2的话就参考文档吧，我比较习惯用Nginx喵">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://null4n.github.io/images/install-wizard-a.png">
+<meta property="og:image" content="https://null4n.github.io/images/install-wizard-a1.png">
+<meta property="og:updated_time" content="2018-12-04T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NextCloud 安装填坑">
+<meta name="twitter:description" content="最近想搭个私有云，在群里问了一圈又 Google 了一番选择用 NextCloud。本来以为按照官方文件就肯定稳了喵，谁知道还是被坑了喵。下面随便记录填坑 &amp;amp; 安装过程吧喵。 必须的玩意：   Ubuntu 18.04 MariaDB Nginx PHP     其他系统不会用的辣鸡  官方文档看这里吧：Admin Manual如果用Apache2的话就参考文档吧，我比较习惯用Nginx喵">
+<meta name="twitter:image" content="https://null4n.github.io/images/install-wizard-a.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://null4n.github.io/2018/12/05/nextcloud-install-guide/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>NextCloud 安装填坑 | Null' 废话</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Null' 废话</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">1</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">2</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://null4n.github.io/2018/12/05/nextcloud-install-guide/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="喵">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Null' 废话">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NextCloud 安装填坑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-05 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-05T00:00:00+08:00">2018-12-05</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/教程/" itemprop="url" rel="index"><span itemprop="name">教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/05/nextcloud-install-guide/#comments" itemprop="discussionUrl">
+                
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/05/nextcloud-install-guide/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.9k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">15 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近想搭个私有云，在群里问了一圈又 Google 了一番选择用 NextCloud。本来以为按照官方文件就肯定稳了喵，谁知道还是被坑了喵。下面随便记录填坑 &amp; 安装过程吧喵。</p>
+<p>必须的玩意：</p>
+<blockquote>
+<ul>
+<li>Ubuntu 18.04</li>
+<li>MariaDB</li>
+<li>Nginx</li>
+<li>PHP</li>
+</ul>
+</blockquote>
+<ul>
+<li style="list-style: none"><input type="checkbox" checked> <em>其他系统不会用的辣鸡</em></li>
+</ul>
+<p>官方文档看这里吧：<a href="https://docs.nextcloud.com/server/14/admin_manual" target="_blank" rel="noopener">Admin Manual</a><br>如果用Apache2的话就参考文档吧，我比较习惯用Nginx喵。</p>
+<h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h2><p>首先安装所有依赖报<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># apt-get update</span></span><br><span class="line"><span class="comment"># apt-get install mariadb-server php-gd php-json php-mysql php-curl \</span></span><br><span class="line">    php-mbstring php-intl php-imagick php-xml php-zip php-apcu php-redis \</span><br><span class="line">    php-fpm nginx redis-server</span><br></pre></td></tr></table></figure></p>
+<h2 id="配置服务"><a href="#配置服务" class="headerlink" title="配置服务"></a>配置服务</h2><h3 id="申请证书"><a href="#申请证书" class="headerlink" title="申请证书"></a>申请证书</h3><p>下面是HTTPS，如果不要这玩意直接跳到<a href="#服务器配置文件"><strong><code>服务器配置文件</code></strong></a>喵。</p>
+<p>这里我用acme.sh喵，轻便不像 <code>Certbot</code> 那样还要装一堆依赖喵。</p>
+<ul>
+<li><p>安装acme.sh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># curl https://get.acme.sh | sh</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>申请证书</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># acme.sh --issue -d example.com --nginx</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装证书到Nginx目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># acme.sh --install-cert -d example.com \</span></span><br><span class="line">--key-file /etc/nginx/ssl/example.com.key \</span><br><span class="line">--fullchain-file /etc/nginx/ssl/fullchain.cer \</span><br><span class="line">--reloadcmd <span class="string">"service nginx force-reload"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p>先配置好服务器再搞 NextCloud 喵。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/nginx/nginx.conf</span></span><br></pre></td></tr></table></figure></p>
+<p>找到 <code>ssl_protocols</code> 把后面 <code>TLSv1</code> 删掉，不安全的老旧玩意。<br>在这行下面添加一行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssl_ciphers &apos;$ciphers&apos;;</span><br></pre></td></tr></table></figure></p>
+<p><code>$ciphers</code> 按自己需要写，我直接在 <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" target="_blank" rel="noopener">Mozilla</a> 上生成的填上去了喵。<br>第一列选 <code>Nginx</code> 第二列选 <code>Modern</code> 或者 <code>Intermediate</code>，第三列填你vps上安装的版本号。<br>如果不需要考虑兼容就设备/软件建议选 <code>Modern</code> 喵。改完按 <code>Ctrl + O</code> 保存， <code>Ctrl + X</code> 退出。<br>注意目前 18.04 的 <code>Nginx</code> 和 <code>OpenSSL</code> 版本都不支持 <code>TLSv1.3</code> 喵。如果你想启用 <code>TLSv1.3</code> 你需要自己下载 <code>OpenSSL 1.1.1</code> 以上版本和 <code>Nginx</code> 自行编译喵。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/nginx/sites-enabled/default</span></span><br></pre></td></tr></table></figure></p>
+<p>找到 <code>server_name</code> 填上自己的域名，然后在下面一行写跳转HTTPS。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return 301 https://$server_name$request_uri;</span><br></pre></td></tr></table></figure></p>
+<h3 id="服务器配置文件"><a href="#服务器配置文件" class="headerlink" title="服务器配置文件"></a>服务器配置文件</h3><p>新建一个配置文件：<code>/etc/nginx/sites-enabled/nextcloud</code><br>下面分两部分喵，如果你可以把 NextCloud 放在服务器根目录（<a href="https://example.com）或者子目录（https：//example.com/subfolder）喵，按自己喜欢的写喵。" target="_blank" rel="noopener">https://example.com）或者子目录（https：//example.com/subfolder）喵，按自己喜欢的写喵。</a></p>
+<p>文件内容如下：<br><em>把 <code>example.com</code> 改成自己的域名，把 <code>subfolder</code> 改成你需要的名字或者删掉。</em><br><figure class="highlight plain"><figcaption><span>/etc/nginx/sites-enabled/nextcloud</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">upstream php-handler &#123;</span><br><span class="line">	#server 127.0.0.1:9000;</span><br><span class="line">	server unix:/var/run/php/php7.2-fpm.sock; # 18.04默认使用unix sock</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">	#listen 80; # 不需要HTTPS的把这行前面的#删掉</span><br><span class="line">	#listen [::]:80; # 同上，并且把下面两行监听 443 端口的在开头加 # 号</span><br><span class="line">	listen 443 ssl http2 fastopen=3;</span><br><span class="line">	listen [::]:443 ssl http2 fastopen=3;</span><br><span class="line">	server_name example.com;</span><br><span class="line"></span><br><span class="line">	# 不启用 HTTPS 的话这里到下面一段都不需要</span><br><span class="line">	ssl_certificate /etc/nginx/ssl/fullchain.cer;</span><br><span class="line">	ssl_certificate_key /etc/nginx/ssl/example.com.key;</span><br><span class="line"></span><br><span class="line">	add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains&quot; always;</span><br><span class="line">	add_header X-Content-Type-Options nosniff;</span><br><span class="line">	add_header X-XSS-Protection &quot;1; mode=block&quot;;</span><br><span class="line">	add_header X-Robots-Tag none;</span><br><span class="line">	add_header X-Download-Options noopen;</span><br><span class="line">	add_header X-Permitted-Cross-Domain-Policies none;</span><br><span class="line">	add_header Referrer-Policy no-referrer;</span><br><span class="line">	# 不启用 HTTPS 的话上面到这里一段都不需要</span><br><span class="line"></span><br><span class="line">	# Remove X-Powered-By, which is an information leak</span><br><span class="line">	fastcgi_hide_header X-Powered-By;</span><br><span class="line"></span><br><span class="line">	# Path to the root of your installation</span><br><span class="line">	root /var/www/html/; # Ubuntu 默认路径，不需要子目录把这里改成 NextCloud 的根目录如 /var/www/html/nextcloud</span><br><span class="line"></span><br><span class="line">	location = /robots.txt &#123;</span><br><span class="line">		allow all;</span><br><span class="line">		log_not_found off;</span><br><span class="line">		access_log off;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	location = /.well-known/carddav &#123;</span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 删掉</span><br><span class="line">		return 301 $scheme://$host/subfolder/remote.php/dav;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	location = /.well-known/caldav &#123;</span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 删掉</span><br><span class="line">		return 301 $scheme://$host/subfolder/remote.php/dav;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	location /.well-known/acme-challenge &#123; &#125;</span><br><span class="line"></span><br><span class="line">	# subfolder 改成你放的文件夹名字，放在上面 &quot;root&quot; 里定义的 /var/www/html/ 根目录下</span><br><span class="line">	# 如果不需要子目录就这行 &quot;location ^~ /subfolder &#123;&quot; 删掉。注意下面还有一行 &quot;&#125;&quot; 需要删除！</span><br><span class="line">	location ^~ /subfolder &#123;</span><br><span class="line">		# set max upload size</span><br><span class="line">		client_max_body_size 512M;</span><br><span class="line">		fastcgi_buffers 64 4K;</span><br><span class="line"></span><br><span class="line">		# Enable gzip but do not remove ETag headers</span><br><span class="line">		gzip on;</span><br><span class="line">		gzip_vary on;</span><br><span class="line">		gzip_comp_level 4;</span><br><span class="line">		gzip_min_length 256;</span><br><span class="line">		gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;</span><br><span class="line">		gzip_types application/atom+xml application/javascript application/json</span><br><span class="line">			application/ld+json application/manifest+json application/rss+xml</span><br><span class="line">			application/vnd.geo+json application/vnd.ms-fontobject</span><br><span class="line">			application/x-font-ttf application/x-web-app-manifest+json</span><br><span class="line">			application/xhtml+xml application/xml font/opentype image/bmp</span><br><span class="line">			image/svg+xml image/x-icon text/cache-manifest text/css text/plain</span><br><span class="line">			text/vcard text/vnd.rim.location.xloc text/vtt text/x-component</span><br><span class="line">			text/x-cross-domain-policy;</span><br><span class="line"></span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 改成 &quot;/&quot;</span><br><span class="line">		location /subfolder &#123;</span><br><span class="line">			# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 删掉</span><br><span class="line">			rewrite ^ /subfolder/index.php$request_uri;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 改成 &quot;/&quot;</span><br><span class="line">		location ~ ^/subfolder/(?:build|tests|config|lib|3rdparty|templates|data)/ &#123;</span><br><span class="line">			deny all;</span><br><span class="line">		&#125;</span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 改成 &quot;/&quot;</span><br><span class="line">		location ~ ^/subfolder/(?:\.|autotest|occ|issue|indie|db_|console) &#123;</span><br><span class="line">			deny all;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder&quot; 改成 &quot;/&quot;</span><br><span class="line">		location ~ ^/subfolder/(?:index|remote|public|cron|core/ajax/update|status|ocs/v[12]|updater/.+|ocs-provider/.+)\.php(?:$|/) &#123;</span><br><span class="line">			fastcgi_split_path_info ^(.+?\.php)(/.*)$;</span><br><span class="line">			include fastcgi_params;</span><br><span class="line">			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">			fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line">			fastcgi_param HTTPS on;</span><br><span class="line">			#Avoid sending the security headers twice</span><br><span class="line">			fastcgi_param modHeadersAvailable true;</span><br><span class="line">			fastcgi_param front_controller_active true;</span><br><span class="line">			fastcgi_pass php-handler;</span><br><span class="line">			fastcgi_intercept_errors on;</span><br><span class="line">			fastcgi_request_buffering off;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		# 如果不需要子目录把下面一行的 &quot;/subfolder/&quot; 改成 &quot;/&quot;</span><br><span class="line">		location ~ ^/subfolder/(?:updater|ocs-provider)(?:$|/) &#123;</span><br><span class="line">			try_files $uri/ =404;</span><br><span class="line">			index index.php;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		location ~ \.(?:css|js|woff2?|svg|gif)$ &#123;</span><br><span class="line">			try_files $uri /subfolder/index.php$request_uri;</span><br><span class="line">			add_header Cache-Control &quot;public, max-age=15778463&quot;;</span><br><span class="line">			add_header X-Content-Type-Options nosniff;</span><br><span class="line">			add_header X-XSS-Protection &quot;1; mode=block&quot;;</span><br><span class="line">			add_header X-Robots-Tag none;</span><br><span class="line">			add_header X-Download-Options noopen;</span><br><span class="line">			add_header X-Permitted-Cross-Domain-Policies none;</span><br><span class="line">			add_header Referrer-Policy no-referrer;</span><br><span class="line"></span><br><span class="line">			# Optional: Don&apos;t log access to assets</span><br><span class="line">			access_log off;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		location ~ \.(?:png|html|ttf|ico|jpg|jpeg)$ &#123;</span><br><span class="line">			try_files $uri /subfolder/index.php$request_uri;</span><br><span class="line">			# Optional: Don&apos;t log access to other assets</span><br><span class="line">			access_log off;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125; # 如果不需要子目录把这行删除</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>下载此配置文件：<a href="/assets/nextcloud.conf">nextcloud.conf</a></strong></p>
+<h2 id="安装-NextCloud"><a href="#安装-NextCloud" class="headerlink" title="安装 NextCloud"></a>安装 NextCloud</h2><h3 id="下载并解压"><a href="#下载并解压" class="headerlink" title="下载并解压"></a>下载并解压</h3><p>下载最新版 <a href="https://download.nextcloud.com/server/releases/latest.zip" target="_blank" rel="noopener">NextCloud</a><br>解压并复制到网站的根目录下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wget https://download.nextcloud.com/server/releases/latest.zip</span></span><br><span class="line"><span class="comment"># unzip lastest.zip</span></span><br><span class="line"><span class="comment"># mv nextcloud /var/www/html/</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="初始化-NextCloud"><a href="#初始化-NextCloud" class="headerlink" title="初始化 NextCloud"></a>初始化 NextCloud</h3><p>下面可以运行服务了喵，按照官方的文档到这里就结束了喵，剩下的可以到网站上操作喵，但是其实这里有大坑等着喵。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># systemctl restart nginx.service</span></span><br></pre></td></tr></table></figure></p>
+<p>这时候应该已经可以打开网页看到 NextCloud 了喵，不过还不能在网页上继续配置喵。因为安全规则限制了必须手动添加一个特权用户到数据库里。<br><figure class="highlight bash"><figcaption><span>输入 root 密码登录。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mysql -u root -p -h localhost</span></span><br><span class="line">Enter password: </span><br><span class="line">Welcome to the MariaDB monitor.  Commands end with ; or \g.</span><br><span class="line">Your MariaDB connection id is 4722</span><br><span class="line">Server version: 10.1.34-MariaDB-0ubuntu0.18.04.1 Ubuntu 18.04</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.</span><br><span class="line"></span><br><span class="line">Type <span class="string">'help;'</span> or <span class="string">'\h'</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">'\c'</span> to clear the current input statement.</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>新建特权用户<br><em>username 改成你想要的用户名，下面要用到。password自己填个密码。</em><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; create user <span class="string">'username'</span>@<span class="string">'localhost'</span> identified by <span class="string">'password'</span>;</span><br><span class="line">MariaDB [(none)]&gt; create database <span class="keyword">if</span> not exists nextcloud;</span><br><span class="line">MariaDB [(none)]&gt; grant select, insert,update, delete, create,drop, index, alter, create temporary tables on nextcloud.* to <span class="string">'username'</span>@<span class="string">'localhost'</span> identified by <span class="string">'password'</span>;</span><br><span class="line">MariaDB [(none)]&gt; flush privileges;</span><br><span class="line">MariaDB [(none)]&gt; <span class="built_in">exit</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>然后就可以打开网页继续初始化了<br><img src="/images/install-wizard-a.png" alt=""><br>用户名密码不说了，这是登录网页时用到的，初始化新建的这个是管理员。<br>点开 <code>Storage &amp; Database</code> 的小箭头<br><img src="/images/install-wizard-a1.png" alt=""><br>Data Folder 按照文档提示最好不要放到 NextCloud 的安装目录内<br>root 改成上面在数据库里新建的帐号，密码是上面自己设的。<br>然后点 <code>Finish Setup</code> 等待初始化。</p>
+<h3 id="优化-NextCloud"><a href="#优化-NextCloud" class="headerlink" title="优化 NextCloud"></a>优化 NextCloud</h3><p>这里可以不做了，继续做下去完全是因为在 NextCloud 的设置里会提示我需要优化我受不了喵。<br>拒绝看到任何提示喵～</p>
+<h4 id="Cron定时任务"><a href="#Cron定时任务" class="headerlink" title="Cron定时任务"></a>Cron定时任务</h4><p>NextCloud 有几种模式，默认的需要开网页才会运行，还是换掉吧喵，改用cron。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crontab -u www-data -e</span></span><br></pre></td></tr></table></figure></p>
+<p>  然后在底部粘贴这一行，/var/www/html/nextcloud 改成自己的路径，保存后退出。<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/15  *  *  *  * php -f /var/www/html/nextcloud/cron.php</span><br></pre></td></tr></table></figure></p>
+<p>  验证：<br>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crontab -u www-data -l</span></span><br></pre></td></tr></table></figure></p>
+<p>然后在网页端设置里把默认的 <code>AJAX</code> 改成 <code>Cron</code>。</p>
+<h4 id="缓存优化"><a href="#缓存优化" class="headerlink" title="缓存优化"></a>缓存优化</h4><p>先运行 <code>php</code> 看看系统有没有启用 APCu 和 OPCache。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># php -m | grep -Ei 'apcu|opcache'</span></span><br></pre></td></tr></table></figure></p>
+<p>没有 apcu 的话就是刚才没装上，去安装 <code>php-apcu</code> 喵。<br>然后配置 Redis，默认用的是 TCP 监听但是我这里只需要本地，果断换成 unix sock 去。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/redis/redis.conf</span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>找到 <code>bind 127.0.0.1 ::1</code> 这行在行首加 <code>#</code> 注释掉</li>
+<li>找到 <code>port 6379</code> 这行注释掉</li>
+<li>找到 <code># unixsocket /var/run/redis/redis-server.sock</code> 这行把 <code>#</code> 删掉，记住这个路径之后还会用到</li>
+<li>下面一行 <code>unixsocketperm 700</code> 把 700 改成 777，否则网页会没有权限读写</li>
+</ul>
+<p>保存后退出，重启 Redis 服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># systemctl restart redis</span></span><br></pre></td></tr></table></figure></p>
+<p>下面修改 NextCloud 的配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /var/www/html/nextcloud/config/config.php</span></span><br></pre></td></tr></table></figure></p>
+<p>从倒数第二行开始加，注意配置文件最后一行结尾必须是 <code>);</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&apos;memcache.local&apos; =&gt; &apos;\\OC\\Memcache\\APCu&apos;,</span><br><span class="line">&apos;memcache.locking&apos; =&gt; &apos;\\OC\\Memcache\\Redis&apos;,</span><br><span class="line">&apos;redis&apos; =&gt; </span><br><span class="line">array (</span><br><span class="line">  &apos;host&apos; =&gt; &apos;/var/run/redis/redis-server.sock&apos;,</span><br><span class="line">  &apos;port&apos; =&gt; 0,</span><br><span class="line">),</span><br></pre></td></tr></table></figure></p>
+<p>保存后退出，然后刷新下网页看看喵，如果看到错误提示看看是不是 APCu 没启用喵，我被 APCu 坑了挺久的喵，Redis 没坑过我喵。</p>
+<h4 id="默认语言"><a href="#默认语言" class="headerlink" title="默认语言"></a>默认语言</h4><p>还是刚才的配置文件 <code>config.php</code> 喵<br>在里面加这几行</p>
+<ul>
+<li><em>如果定义了 <code>force_language</code> 的话所有用户都会强制使用 zh_CN 并且无法修改。</em><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'default_locale'</span> =&gt; <span class="string">'zh_CN'</span>,</span><br><span class="line"><span class="string">'force_language'</span> =&gt; <span class="string">'zh_CN'</span>,</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="完结"><a href="#完结" class="headerlink" title="完结"></a>完结</h2><p>差不多就酱了喵，下一步是准备写个一键脚本喵。<br>当然人类的本质是咕咕咕不用指望很快就会看到喵～</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>不接受任何打赏喵</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/avatar.png" alt=" 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NextCloud/" rel="tag"><i class="fa fa-tag"></i> NextCloud</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/01/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description">喵</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/null4n" title="GitHub &rarr; https://github.com/null4n" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://t.me/null_account" title="Telegram &rarr; https://t.me/null_account" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装依赖"><span class="nav-number">1.</span> <span class="nav-text">安装依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置服务"><span class="nav-number">2.</span> <span class="nav-text">配置服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#申请证书"><span class="nav-number">2.1.</span> <span class="nav-text">申请证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS"><span class="nav-number">2.2.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器配置文件"><span class="nav-number">2.3.</span> <span class="nav-text">服务器配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装-NextCloud"><span class="nav-number">3.</span> <span class="nav-text">安装 NextCloud</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载并解压"><span class="nav-number">3.1.</span> <span class="nav-text">下载并解压</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化-NextCloud"><span class="nav-number">3.2.</span> <span class="nav-text">初始化 NextCloud</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化-NextCloud"><span class="nav-number">3.3.</span> <span class="nav-text">优化 NextCloud</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cron定时任务"><span class="nav-number">3.3.1.</span> <span class="nav-text">Cron定时任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存优化"><span class="nav-number">3.3.2.</span> <span class="nav-text">缓存优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#默认语言"><span class="nav-number">3.3.3.</span> <span class="nav-text">默认语言</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完结"><span class="nav-number">4.</span> <span class="nav-text">完结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">9k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15 分钟</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+        
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1.0.0/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://null4n.github.io/2018/12/05/nextcloud-install-guide/';
+        this.page.identifier = '2018/12/05/nextcloud-install-guide/';
+        this.page.title = 'NextCloud 安装填坑';
+        };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/custom.js"></script>
+
+
+</body>
+</html>
